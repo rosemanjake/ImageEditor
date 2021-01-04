@@ -9,15 +9,13 @@
 #include <numeric>
 #include <utility>
 
-
-//https://medium.com/sysf/bits-to-bitmaps-a-simple-walkthrough-of-bmp-image-format-765dc6857393
-
 //Class for pixel objects with RGB methods and get/set methods for flexible manipulation
 class Pixel
 {
-    public:int8_t B;
-    public:int8_t G;
-    public:int8_t R;
+    public:
+    int8_t B;
+    int8_t G;
+    int8_t R;
 
     Pixel() {} // default constructor for resizing vectors.
 
@@ -33,10 +31,11 @@ class Pixel
 //Class for image objects containing everything we need to manipulate and save images etc.
 class Image
 {
-    public:std::vector<int8_t> Header;
-    public:std::vector<Pixel> Pixels;
-    public:int Height;
-    public:int Width;
+    public:
+    std::vector<int8_t> Header;
+    std::vector<Pixel> Pixels;
+    int Height;
+    int Width;
 
     Image(std::vector<int8_t> aHeader, std::vector<Pixel> aPixels, int aHeight, int aWidth)
     {
