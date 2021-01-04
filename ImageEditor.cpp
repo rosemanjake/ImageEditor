@@ -18,7 +18,7 @@ class Pixel
     public:int8_t B;
     public:int8_t G;
     public:int8_t R;
-    
+
     Pixel() {} // default constructor for resizing vectors.
 
     //I'm using BGR as the order as that's how the bytes appear in the file sequentially on account of little endianness.
@@ -26,36 +26,6 @@ class Pixel
     {
         B = aB;
         G = aG;
-        R = aR;
-    }
-
-    int8_t getB()
-    {
-        return B;
-    }
-
-    int8_t getG()
-    {
-        return G;
-    }
-
-    int8_t getR()
-    {
-        return R;
-    }
-
-    void setB(int8_t aB)
-    {
-        B = aB;
-    }
-
-    void setG(int8_t aG)
-    {
-        G = aG;
-    }
-
-    void setR(int8_t aR)
-    {
         R = aR;
     }
 };
@@ -85,7 +55,6 @@ std::string filenamefetcher(std::string type)
     std::cin >> filename;
     return filename;
 }
-
 
 //Turn 8 bit int into a string with the actual binary value
 std::string toBinary(int8_t byte)
@@ -118,7 +87,7 @@ uint8_t to8bitint(std::string bin)
 }
 
 //Write an image to disk, using the image object
-void imagewriter_obj(Image image)
+void imagewriter_obj(Image& image)
 {
     std::string filename{ filenamefetcher("output") };
     std::ofstream file(filename, std::ios_base::binary | std::ios_base::out);
@@ -130,9 +99,9 @@ void imagewriter_obj(Image image)
 
     for (size_t i = 0; i < image.Pixels.size(); i++)
     {
-        file << image.Pixels[i].getB();
-        file << image.Pixels[i].getG();
-        file << image.Pixels[i].getR();
+        file << image.Pixels[i].B;
+        file << image.Pixels[i].G;
+        file << image.Pixels[i].R;
     }
 }
 
@@ -141,8 +110,6 @@ std::vector<Pixel> bytestopix(std::vector<int8_t> vector)
 {
     std::cout << "Creating pixel objects...\n";
     std::vector<Pixel> pixels;
-
-    //vector.erase(vector.begin(), vector.begin() + 53); //delete all pixels in the header, the rest should be divisible by 3 (?)
 
     int8_t R = 0;
     int8_t G = 0;
@@ -280,7 +247,7 @@ std::vector<Pixel> arraytopix(std::vector<std::vector<Pixel>> array)
 }
 
 //Flip image horizontally
-Image hflip(Image image)
+Image hflip(Image& image)
 {
     std::vector<std::vector<Pixel>> multiarray = arraymaker(image.Pixels, image.Height, image.Width);
 
@@ -293,7 +260,7 @@ Image hflip(Image image)
 }
 
 //Flip image vertically
-Image vflip(Image image)
+Image vflip(Image& image)
 {
     std::vector<std::vector<Pixel>> multiarray = arraymaker(image.Pixels, image.Height, image.Width);
     std::vector<std::vector<Pixel>> flipped;
@@ -306,7 +273,7 @@ Image vflip(Image image)
 }
 
 //Turn image greyscale
-Image greyscale(Image image)
+Image greyscale(Image& image)
 {
     for (size_t i = 0; i < image.Pixels.size(); i++)
     {
@@ -320,13 +287,13 @@ Image greyscale(Image image)
 }
 
 //Function for modifying colour values - here I'm using RGB as the order for the parameters rather than GBR to make mods a bit more user friendly 
-Image colourmod(Image image, double red, double green, double blue)
+Image colourmod(Image& image, double red, double green, double blue)
 {
     for (size_t i = 0; i < image.Pixels.size(); i++)
     {
-        image.Pixels[i].setB((int8_t)image.Pixels[i].getB() * blue);
-        image.Pixels[i].setG((int8_t)image.Pixels[i].getG() * green);
-        image.Pixels[i].setR((int8_t)image.Pixels[i].getR() * red);
+        image.Pixels[i].B = ((int8_t)image.Pixels[i].B * blue);
+        image.Pixels[i].G = ((int8_t)image.Pixels[i].G * green);
+        image.Pixels[i].R = ((int8_t)image.Pixels[i].R * red);
     }
 
     return Image(image.Header, image.Pixels, image.Height, image.Width);
@@ -366,7 +333,7 @@ int main()
     Image v = vflip(plain);
     std::cout << "Successfully flipped image vertically. ";
     imagewriter_obj(v);
-   
+    
     //transform to greyscale and save
     Image g = greyscale(plain);
     std::cout << "Successfully converted image to greyscale. ";
